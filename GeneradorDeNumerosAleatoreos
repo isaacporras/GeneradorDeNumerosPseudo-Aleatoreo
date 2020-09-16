@@ -1,0 +1,88 @@
+		;		R1,R2 son para valores iniciales
+		
+		;		R3 es contador
+		
+		;		R4 es
+		
+		
+		
+		;		Realizamos el manejo de la letra P
+		
+		MOV		R1, #0x00000050 ; Ponemos la letra P (de Porras) en el registro 1 00000100
+		
+		MOV		R2, #0x200 ; Setteamos el valor base de escritura en el registro 2
+		STR		R1,[R2] ; Guardamos en la letra P en la dirección 0x100
+		
+		;Inicializamos	variables
+		
+		MOV		R3, #0 ; Creamos un contador con un valor inicial de 0
+		
+		
+		
+		
+LFSR
+		CMP		R3, #400	; Condicion de parada para cuando se escribieron las 100 palabras. Es 400 porque 100(numeros)x 4(incrementos) =  400
+		BEQ		FIN ; Terminamos el programa si la condicion de
+		
+		;Obtenemos	el octavo bit
+		
+		LSL		R4, R1 , #23 ; Movemos el octavo bit al MSB
+		LSR		R4 , R4, #31 ; Movemos el bit al bit menos significativo
+		
+		;Obtenemos	el sexto bit
+		
+		LSL		R5, R1 , #26 ; Movemos el sexto bit al MSB
+		LSR		R5 , R5, #31 ; Movemos el bit sexto al bit menos significativo
+		
+		;Obtenemos	el quinto bit
+		
+		LSL		R6, R1 , #27 ; Movemos el octavo bit al MSB
+		LSR		R6 , R6, #31 ; Movemos el bit al bit menos significativo
+		
+		;Obtenemos	el cuarto bit
+		
+		LSL		R7, R1 , #28 ; Movemos el octavo bit al MSB
+		LSR		R7 , R7, #31 ; Movemos el bit al bit menos significativo
+		
+		
+		;Aplicamos	XOR entre el cuarto y quinto bit
+		
+		EOR		R8,R7,R6 ;
+		
+		
+		;Aplicamos	XOR entre el resultado anterior y sexto bit
+		
+		EOR		R9,R8,R5 ;
+		
+		;Aplicamos	XOR entre el resultado anterior y el octavo
+		
+		EOR		R10,R9,R4 ;
+		
+		;		Aplicamos XOr entre el resultado y 1
+		
+		EOR		R10,R10,#1 ;
+		
+		;Movemos	la semilla un campo a la derecha
+		
+		LSR		R1,R1,#1 ;
+		
+		;		Movemos el valor a insertar al MSB
+		
+		LSL		R10,R10,#31 ;
+		
+		;Insertamos	el numero en la semilla
+		
+		ORR		R1,R10,R1 ;
+		
+		;Aumentamos	el contador en 4 para escribir en la siguiente posicion
+		
+		ADD		R3,R3,#4 ;
+		
+		;Se		escribe el resultado en el registro
+		
+		STR		R1, [R2,R3] ;
+		
+		B		LFSR ;
+		
+		
+FIN
